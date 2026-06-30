@@ -6,7 +6,7 @@ from accurse.svg_util import proc_svgs
 from accurse.hycur import handle_hycur
 from accurse.xcur import handle_xcur
 
-def main() -> bool:
+def main() -> int:
     # Provide path to the TOML file
     metadata_path = Path(sys.argv[1]).resolve()
 
@@ -14,20 +14,20 @@ def main() -> bool:
     toml_data = read_toml(metadata_path)
     if toml_data is None:
         print('Aborting!')
-        return False
+        return 1
 
     # Check for toml validity here
     valid_toml = check_toml(toml_data)
     if not valid_toml:
         print('Aborting!')
-        return False
+        return 1
 
     # Create AC-Theme directory
     asset_path = metadata_path.parent
     dest_path = get_dest_path(asset_path)
     if dest_path is None:
         print('Aborting!')
-        return False
+        return 1
 
     # Copy svgs in asset_path to dest_path/svgs
     create_svgdir(asset_path, dest_path, toml_data)
@@ -42,8 +42,4 @@ def main() -> bool:
     handle_xcur(dest_path, toml_data)
 
     print('Packaging done!')
-    return True
-
-
-if __name__ == "__main__":
-    sys.exit(0 if main() else 1)
+    return 0
